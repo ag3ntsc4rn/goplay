@@ -1,56 +1,27 @@
 package main
 
 import (
-	"io"
-	"os"
+	"encoding/json"
+	"fmt"
 )
 
-type writeFile struct {
-	f *os.File
-	err error
+type person struct {
+	First string
 }
 
-func newWriteFile(filename string) *writeFile {
-	f, err := os.Create(filename)
-	return &writeFile{
-		f: f,
-		err: err,
-	} 
-}
-
-func (w *writeFile) writeString(text string){
-	if w.err != nil {
-		return
+func main() {
+	p1 := person{
+		First: "Jenny",
 	}
-	_, err := io.WriteString(w.f, text)
-	if err != nil {
-		w.err = err
+	p2 := person{
+		First: "James",
 	}
-}
+	xp := []person{p1,p2}
 
-func (w *writeFile) Close(){
-	if w.err != nil {
-		return
-	}
-	err := w.f.Close()
-	if err != nil {
-		w.err = err
-	}
-}
-
-func (w *writeFile) Err() error {
-	return w.err
-}
-
-func main(){
-	f := newWriteFile("Hello.txt")
-	f.writeString("Hello World!")
-	f.writeString("More text")
-	f.Close()
-
-	err := f.Err() 
+	bs, err := json.Marshal(xp)
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println(string(bs))
 }
